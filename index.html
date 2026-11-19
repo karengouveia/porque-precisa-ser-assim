@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Por que precisa ser assim? · O livro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Caveat:wght@500;600&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* A real hardback on a dark reading table: petrol-blue cloth with copper foil,
+   ivory pages turned one leaf at a time, typeset like a printed memoir. */
+:root{
+  --table:#1A2226; --table2:#0E1417; --cloth:#1F4A55; --cloth-d:#14333B; --foil:#D59A6A; --foil-d:#9C6038;
+  --paper:#F6F2E9; --paper-d:#E9E2D2; --ink:#26221D; --soft:#6E665A; --accent:#1F4A55;
+  --f-display:"Libre Caslon Display", "Didot", Georgia, serif;
+  --ink-blue:#23408E; --f-hand:"Caveat", "Bradley Hand", cursive;
+  --f-body:"Crimson Pro", Georgia, "Times New Roman", serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(ellipse at 50% 40%,#2a363b 0%,var(--table) 55%,var(--table2) 100%);color:#e8e2d6;
+  font-family:var(--f-body);overflow:hidden;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--foil);outline-offset:3px}
+
+.stage{flex:1;display:grid;place-items:center;perspective:2600px;position:relative;min-height:0}
+.book{position:relative;width:calc(var(--pw)*2);height:var(--ph);transform-style:preserve-3d;
+  transition:transform 1.1s cubic-bezier(.55,.05,.25,1);transform:translateX(calc(var(--pw)*-0.5))}
+.book.open{transform:none}
+.single .book{width:var(--pw);transform:none!important}
+
+.slot{position:absolute;top:0;z-index:5;width:var(--pw);height:var(--ph)}
+.slot.L{left:0}.slot.R{left:var(--pw)}
+.single .slot.R{left:0}
+.single .slot.L{display:none}
+
+/* page */
+.page{position:absolute;inset:0;background:var(--paper);color:var(--ink);overflow:hidden;
+  padding:calc(var(--pw)*.1) calc(var(--pw)*.095) calc(var(--pw)*.085);display:flex;flex-direction:column;font-size:var(--fs);line-height:1.5}
+.slot.R .page,.leaf .front{border-radius:0 3px 3px 0;box-shadow:inset 18px 0 22px -14px rgba(60,40,10,.38), 1px 0 0 #d9d1bf, 2px 0 0 #efe9dc, 3px 0 0 #d6cebb, 4px 1px 0 #ece6d8, 5px 1px 0 #cfc6b2}
+.slot.L .page,.leaf .back{border-radius:3px 0 0 3px;box-shadow:inset -18px 0 22px -14px rgba(60,40,10,.38), -1px 0 0 #d9d1bf, -2px 0 0 #efe9dc, -3px 0 0 #d6cebb, -4px 1px 0 #ece6d8, -5px 1px 0 #cfc6b2}
+.single .slot.R .page{border-radius:3px;box-shadow:0 0 0 1px #d9d1bf,3px 3px 0 #e6dfcf,4px 4px 0 #d1c8b4}
+.page::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.35),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(150,120,70,.08),transparent 60%)}
+.pg-head{font-size:.72em;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);text-align:center;height:2.2em;flex:none;font-variant:small-caps}
+.pg-body{flex:1;min-height:0;overflow:hidden;hyphens:auto;-webkit-hyphens:auto}
+.pg-foot{flex:none;text-align:center;font-size:.8em;color:var(--soft);padding-top:.6em;font-variant-numeric:oldstyle-nums}
+.pg-body p{margin:0;text-align:justify;text-indent:1.4em}
+.pg-body p.first,.pg-body p.cont,.pg-body .after p:first-child{text-indent:0}
+.pg-body p.first::first-letter{font-family:var(--f-display);float:left;font-size:3.5em;line-height:.82;padding:.06em .08em 0 0;color:var(--accent)}
+.opener{padding-top:12%;margin-bottom:1.6em}
+.opener .lab{font-size:.78em;letter-spacing:.24em;text-transform:uppercase;color:var(--foil-d);margin:0 0 .6em}
+.opener .num{font-family:var(--f-display);font-size:3.6em;line-height:1;color:var(--accent);margin:0 0 .15em}
+.opener h2{font:400 2.05em/1.08 var(--f-display);margin:0;text-wrap:balance;color:var(--ink)}
+.opener .kick{font-style:italic;color:var(--soft);margin:.7em 0 0;font-size:1.05em;line-height:1.35}
+.opener .rule{width:3.2em;height:1px;background:var(--foil-d);margin-top:1.2em}
+.pg-body h3{font:400 1.32em/1.2 var(--f-display);margin:1.1em 0 .5em;color:var(--accent)}
+.pg-body blockquote{margin:.9em .6em;font:italic 500 1.28em/1.35 var(--f-body);text-align:center;color:var(--accent)}
+.pg-body blockquote::before{content:"";display:block;width:2em;height:1px;background:var(--foil-d);margin:0 auto .6em}
+.pg-body ul{margin:.6em 0;padding:0;list-style:none}
+.pg-body li{padding-left:1.1em;position:relative;margin:0 0 .35em;line-height:1.4}
+.pg-body li::before{content:"❧";position:absolute;left:0;color:var(--foil-d);font-size:.85em}
+.pg-body figure{margin:.8em 0;text-align:center}
+.pg-body figure img{display:inline-block;background:#fff;padding:4px;box-shadow:0 1px 3px rgba(40,30,10,.3);cursor:zoom-in;object-fit:cover}
+.pg-body figcaption{font-style:italic;font-size:.82em;color:var(--soft);line-height:1.3;margin-top:.35em}
+.pg-body .pair{display:grid;grid-template-columns:1fr 1fr;gap:.8em;margin:.8em 0}
+.pg-body .pair figure{margin:0}
+.pg-body a.lnk{display:block;text-decoration:none;color:var(--ink);border-top:1px solid var(--paper-d);padding:.7em 0}
+.pg-body a.lnk b{display:block;font:400 1.15em/1.2 var(--f-display);color:var(--accent)}
+.pg-body a.lnk small{font-size:.8em;color:var(--foil-d);word-break:break-all}
+.pg-body a.lnk:hover b{text-decoration:underline}
+/* front matter */
+.tp{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.tp .a{letter-spacing:.3em;text-transform:uppercase;font-size:.8em;color:var(--foil-d)}
+.tp h1{font:400 2.6em/1.05 var(--f-display);margin:.5em 0;color:var(--accent);text-wrap:balance}
+.tp p{font-style:italic;color:var(--soft);max-width:22em;line-height:1.4}
+.tp .orn{color:var(--foil-d);font-size:1.4em;margin-top:1em}
+.nums{display:grid;gap:1.1em;margin-top:1.4em}
+.nums div{border-top:1px solid var(--paper-d);padding-top:.6em}
+.nums b{display:block;font:400 2.1em/1 var(--f-display);color:var(--accent)}
+.nums span{color:var(--soft);font-size:.9em}
+.toc{list-style:none;padding:0;margin:1em 0 0}
+.toc li::before{content:none}
+.toc li{padding-left:0;display:flex;gap:.5em;align-items:baseline;margin:0 0 .28em;line-height:1.25}
+.toc button{all:unset;cursor:pointer;display:flex;gap:.5em;align-items:baseline;width:100%}
+.toc button:hover .t{color:var(--accent);text-decoration:underline}
+.toc .n{width:2.2em;flex:none;color:var(--foil-d);font-family:var(--f-display);font-size:.9em}
+.toc .t{flex:none;max-width:78%}
+.toc i{flex:1;border-bottom:1px dotted #bdb3a0;transform:translateY(-.3em)}
+.toc .pn{flex:none;font-variant-numeric:oldstyle-nums;color:var(--soft)}
+.end{height:100%;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.end .orn{color:var(--foil-d);font-size:1.6em}
+.end p{font-style:italic;color:var(--soft)}
+
+/* cover */
+.cover{position:absolute;top:0;left:var(--pw);width:var(--pw);height:var(--ph);transform-origin:left center;transform-style:preserve-3d;
+  transition:transform 1.1s cubic-bezier(.55,.05,.25,1);z-index:20;cursor:pointer}
+.single .cover{left:0}
+.book.open .cover{transform:rotateY(-180deg);cursor:default;z-index:1;transition:transform 1.1s cubic-bezier(.55,.05,.25,1),z-index 0s 1.1s}
+.single .book.open .cover{transform:rotateY(-100deg);opacity:0;transition:transform 1s cubic-bezier(.55,.05,.25,1),opacity .4s .6s;pointer-events:none}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.cover .front{border-radius:2px 6px 6px 2px;color:var(--foil);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12%;
+  background:linear-gradient(90deg,rgba(0,0,0,.45) 0,rgba(0,0,0,.1) 3.5%,rgba(255,255,255,.06) 4.5%,transparent 7%),
+   repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px),
+   radial-gradient(ellipse at 40% 30%,#2a5d6a,var(--cloth) 55%,var(--cloth-d));
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.4)}
+.cover .front::before{content:"";position:absolute;inset:7% 8% 7% 10%;border:1px solid rgba(213,154,106,.55);outline:1px solid rgba(213,154,106,.3);outline-offset:5px;pointer-events:none}
+.foil{background:linear-gradient(115deg,#9c6038 0%,#f1c79c 28%,#c8865a 45%,#f6d3ad 60%,#a86a40 82%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.medal{width:calc(var(--pw)*.2);height:calc(var(--pw)*.2);border-radius:50%;border:1.5px solid rgba(213,154,106,.7);display:grid;place-items:center;
+  font:400 calc(var(--pw)*.13)/1 var(--f-display);margin-bottom:8%}
+.cover h1{font:400 calc(var(--pw)*.095)/1.05 var(--f-display);margin:0;text-wrap:balance}
+.cover .by{margin-top:9%;letter-spacing:.32em;text-transform:uppercase;font-size:calc(var(--pw)*.032)}
+.cover .hint{position:absolute;bottom:4.5%;left:0;right:0;font-style:italic;font-size:calc(var(--pw)*.03);color:#a9c2c6;opacity:.9}
+.cover .back{transform:rotateY(180deg);border-radius:6px 2px 2px 6px;
+  background:radial-gradient(circle at 25% 25%,rgba(31,74,85,.16) 0 18%,transparent 19%) 0 0/34px 34px,radial-gradient(circle at 75% 75%,rgba(213,154,106,.18) 0 14%,transparent 15%) 0 0/34px 34px,#EFE6D3;
+  box-shadow:inset -20px 0 26px -16px rgba(0,0,0,.35)}
+
+/* turning leaf */
+.leaf{position:absolute;top:0;left:var(--pw);width:var(--pw);height:var(--ph);transform-origin:left center;transform-style:preserve-3d;z-index:30;display:none;pointer-events:none}
+.single .leaf{left:0}
+.leaf .face{overflow:hidden}
+.leaf .back{transform:rotateY(180deg)}
+.leaf .shade{position:absolute;inset:0;pointer-events:none;opacity:0;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,0) 60%)}
+.leaf.go .shade{animation:sh var(--dur) ease-in-out}
+@keyframes sh{50%{opacity:1}}
+.single .leaf .back{background:var(--paper-d)}
+.book::after{content:"";position:absolute;left:calc(var(--pw) - 1px);top:0;bottom:0;width:2px;background:rgba(0,0,0,.12);z-index:25;opacity:0;transition:opacity .4s .8s}
+.book.open::after{opacity:1}
+.single .book::after{display:none}
+
+/* controls */
+.ctrl{flex:none;display:flex;gap:14px;justify-content:center;align-items:center;padding:12px 16px 18px;font-size:15px;color:#c9c2b4}
+.ctrl button{all:unset;cursor:pointer;padding:8px 16px;border:1px solid rgba(213,154,106,.5);border-radius:999px;color:#efd9c3}
+.ctrl button:hover{background:rgba(213,154,106,.14)}
+.ctrl button[disabled]{opacity:.3;cursor:default}
+.ctrl .pos{min-width:6.5em;text-align:center;font-variant-numeric:tabular-nums;font-style:italic}
+.ctrl .shut{border-color:transparent;text-decoration:underline;text-underline-offset:3px}
+body:not(.is-open) .ctrl .nav{visibility:hidden}
+
+#lb{border:0;padding:0;background:transparent;max-width:none;max-height:none}
+#lb::backdrop{background:rgba(5,8,10,.88)}
+#lb[open]{display:grid;place-items:center;width:100vw;height:100vh;cursor:zoom-out}
+#lb img{max-width:92vw;max-height:82vh;background:#fff;padding:8px}
+#lb p{color:#e8e2d6;font-style:italic;text-align:center;margin:10px 16px 0}
+@media (max-width:819px){.ctrl{gap:8px;font-size:14px;padding:8px 8px 14px}.ctrl button{padding:7px 11px}.ctrl .pos{min-width:4.5em}}
+/* pen notes + highlighter */
+.hand{display:block;font:600 1.32em/1.05 var(--f-hand);color:var(--ink-blue);text-align:right;transform:rotate(-3deg);margin:.15em .4em .2em 0;
+  animation:write 1.1s ease-out .85s both}
+.pg-body p.hand{text-align:right;text-indent:0;margin:.1em 0 .5em}
+@keyframes write{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+mark.hl{color:inherit;padding:.02em .18em;border-radius:.6em .25em .7em .3em;-webkit-box-decoration-break:clone;box-decoration-break:clone;
+  background-image:linear-gradient(100deg,rgba(255,230,90,0) 0,rgba(255,230,90,.62) 1.5%,rgba(255,230,90,.42) 50%,rgba(255,230,90,.58) 97%,rgba(255,224,70,0) 100%);
+  background-repeat:no-repeat;background-size:100% 82%;background-position:0 70%;animation:swipe .9s cubic-bezier(.3,.6,.3,1) .7s both}
+@keyframes swipe{from{background-size:0 82%}}
+.pg-body p.hlp{text-indent:0;text-align:left;font:500 1.15em/1.4 var(--f-body);margin:.8em 0}
+.bracket{position:relative}
+.bracket::before{content:"";position:absolute;left:-.9em;top:.2em;bottom:.2em;width:.45em;border:2px solid var(--ink-blue);border-right:0;border-radius:6px 0 0 6px;opacity:.75;transform:rotate(-1.5deg)}
+.pg-body a.video{position:relative;display:inline-block}
+.pg-body a.video img{cursor:pointer}
+.play{position:absolute;left:50%;top:50%;width:3.4em;height:2.4em;margin:-1.2em 0 0 -1.7em;border-radius:.6em;background:rgba(200,30,30,.92);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .2s}
+.play::after{content:"";position:absolute;left:1.35em;top:.65em;border-style:solid;border-width:.55em 0 .55em .9em;border-color:transparent transparent transparent #fff}
+a.video:hover .play{transform:scale(1.1)}
+.page.full{padding:0}
+.page.full .pg-head,.page.full .pg-foot{display:none}
+.page.full .pg-body{overflow:hidden}
+.page.full img.bleed{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.cta{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:.4em}
+.cta .big{text-indent:0!important;hyphens:none;-webkit-hyphens:none;text-align:center!important;font:600 2.35em/1.1 var(--f-hand);color:var(--ink-blue);margin:0;transform:rotate(-2deg);animation:write 1.6s ease-out .9s both}
+.cta svg{width:72%;height:auto;overflow:visible}
+.cta svg path{fill:none;stroke:var(--ink-blue);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;animation:draw .9s ease-out 2.4s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.cta .sig{width:62%;margin-top:1.6em;animation:write 1.4s ease-out 3.2s both}
+@media (prefers-reduced-motion:reduce){.hand,.cta .big,.cta .sig,mark.hl{animation:none}.cta svg path{animation:none;stroke-dashoffset:0}}
+#measure *{animation:none!important}
+#measure{position:absolute;left:-9999px;top:0;visibility:hidden}
+@media (prefers-reduced-motion:reduce){.book,.cover{transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="book" id="book" aria-label="Livro: Por que precisa ser assim?">
+    <div class="slot L" id="L"></div>
+    <div class="slot R" id="R"></div>
+    <div class="cover" id="cover" role="button" tabindex="0" aria-label="Abrir o livro">
+      <div class="face front">
+        <div class="medal foil" aria-hidden="true">?</div>
+        <h1 class="foil">Por que precisa ser assim?</h1>
+        <div class="by foil">Karen Gouveia</div>
+        <div class="hint">toque na capa para abrir</div>
+      </div>
+      <div class="face back"></div>
+    </div>
+    <div class="leaf" id="leaf"><div class="face front"></div><div class="face back"></div><div class="shade"></div></div>
+  </div>
+</div>
+<div class="ctrl">
+  <button type="button" class="nav" id="prev" aria-label="Página anterior">‹ anterior</button>
+  <span class="pos nav" id="pos" aria-live="polite"></span>
+  <button type="button" class="nav" id="next" aria-label="Próxima página">próxima ›</button>
+  <button type="button" class="nav shut" id="shut">fechar o livro</button>
+</div>
+<dialog id="lb" aria-label="Foto ampliada"><figure style="margin:0"><img alt=""><p></p></figure></dialog>
+<div id="measure"></div>
+
+<script>
+const DATA=[{"num": "", "title": "O texto que deixou de ser meu", "kick": "", "label": "Abertura", "blocks": [{"t": "p", "x": "Pedi a uma inteligência artificial que me ajudasse a escrever o meu perfil do LinkedIn. Ela escreveu. Depois, pedi a outra que avaliasse o resultado. A resposta veio educada e implacável: dava para melhorar."}, {"t": "p", "x": "Então eu corrigia. E pedia outra opinião. E corrigia de novo."}, {"t": "p", "x": "Foram tantas rodadas que, no final, o texto estava impecável. Palavras bonitas, verbos de impacto, tudo no lugar. Só tinha um pequeno problema: aquela não era mais a minha história. Era a história de uma profissional qualquer, que eu nunca conheci, e que certamente nunca teve dois cachorros comendo os documentos da empresa. Rsrs."}, {"t": "p", "x": "Foi aí que eu fiz o que faço desde criança quando alguma coisa não funciona."}, {"t": "p", "x": "Desmontei."}, {"t": "p", "x": "Abri a transcrição de voz e contei tudo, do jeito que vinha na cabeça, sem ordem e sem filtro. Desse falatório nasceu um memorial, um arquivo-mestre da minha trajetória, para que nenhuma ferramenta precisasse inventar quem eu sou. E, ao reler esse memorial, percebi que existia um fio atravessando tudo, desde a infância. Uma pergunta que eu nunca parei de fazer:"}, {"t": "q", "x": "Por que precisa ser assim?"}, {"t": "p", "x": "Este livro é a história dessa pergunta."}]}, {"num": "I", "title": "A menina que desmontava brinquedos", "kick": "Curiosidade não é fase. Pelo menos não no meu caso.", "label": "Capítulo I", "blocks": [{"t": "img", "k": "m1", "cap": "Eu, a long, long time ago. 😊", "w": 349, "h": 261, "note": "já tramando desmontar alguma coisa"}, {"t": "p", "x": "Desde pequena, eu não conseguia aceitar que um brinquedo simplesmente \"tinha parado de funcionar\". Eu precisava abrir, descobrir o que tinha acontecido, entender o mecanismo, procurar o padrão e tentar consertar. Às vezes dava certo. Muitas vezes, não. Mas um conserto que falhava nunca foi motivo para eu parar de tentar. Era só a informação de que eu precisava para a tentativa seguinte."}, {"t": "p", "x": "Essa menina curiosa cresceu em Goiânia, criada pela minha mãe e pelos meus avós maternos, numa casa humilde, cheia de amor e de uma educação excepcional. Foram eles que me ensinaram os valores, a ética e os princípios que carrego até hoje e que passo para os meus filhos. Se hoje sou a mulher que sou, devo a eles."}, {"t": "p", "x": "Meu pai tinha se mudado para os Estados Unidos quando eu tinha entre um e dois anos, numa época em que falar com quem morava fora do país era caro e difícil, e as ligações eram raras. Aos 9 anos, a curiosidade falou mais alto: decidi que queria morar com ele e conhecer \"mundos novos\"."}, {"t": "img", "k": "escola", "cap": "Meu primeiro dia de aula nos Estados Unidos.", "w": 1100, "h": 774, "note": "mundos novos!"}, {"t": "p", "x": "Com o tempo, os brinquedos viraram aparelhos eletrônicos e a cola branca virou fita isolante, o que me rendeu alguns momentos bem divertidos. Até que, recentemente, ganhei de surpresa um ferro de solda. Naquele instante, a menina sapeca do passado olhou para a mulher do presente e disse: \"Sim, você está pronta para dar esse próximo passo. Vai.\" Rsrs. Hoje, ele tem um cantinho reservado ao lado da minha mesa de estudos."}, {"t": "img", "k": "m2", "cap": "O tão sonhado ferro de solda, agora guardado pertinho de mim.", "w": 612, "h": 353, "note": "finalmente! ♡"}, {"t": "p", "x": "Essa curiosidade investigativa nunca me abandonou. Até hoje, quando vejo um processo que todo mundo aceita como \"normal\", eu me pergunto: por que precisa ser assim? Não existe outra maneira de fazer isso?"}]}, {"num": "II", "title": "A menina que se achava burra", "kick": "O que ninguém sabia explicar", "label": "Capítulo II", "blocks": [{"t": "p", "x": "Só tinha um detalhe: a menina curiosa não ia nada bem na escola."}, {"t": "p", "x": "Eu tinha muita dificuldade nos estudos. Ninguém entendia o porquê, nem eu. Professores e a minha mãe perdiam a paciência comigo quase todos os dias, e eu fui crescendo com uma certeza silenciosa: eu era burra, preguiçosa, desorganizada e sem interesse em nada. Demorei décadas para descobrir que essa certeza estava errada. Mas essa parte fica para mais adiante."}, {"t": "p", "x": "A vida adulta chegou cedo demais. Casei e fui mãe ainda na adolescência, conheci a pobreza de perto e me separei muito jovem. Os receios que os meus pais tinham por mim, e que eu mesma tinha, pareciam ter se tornado realidade. Por todos os critérios que eu conhecia, eu me sentia o maior fracasso que já tinha visto."}, {"t": "p", "x": "Ainda assim, fui trabalhar. E foi no trabalho que comecei a descobrir uma coisa sobre mim: eu era boa com gente."}, {"t": "p", "x": "Comecei no atendimento ao cliente do Banco do Brasil, no programa \"Posso te Ajudar\". Depois, trabalhei no setor de multiatendimento do IPASGO. Em seguida, fui para a Agência Brasil Central, onde trabalhei na rádio e na produção de um programa de TV."}, {"t": "p", "x": "Atendimento ao público, rotinas administrativas, produção audiovisual e eventos. Áreas muito diferentes, mas que me ensinaram a mesma lição: nenhuma entrega acontece sozinha. Aprendi a observar necessidades, entender perspectivas diferentes e valorizar a confiança nas relações. E descobri o prazer genuíno de encontrar maneiras de facilitar a vida das pessoas. (Uma lembrança dessa fase, que não cabe em números, está guardada no final deste livro.)"}]}, {"num": "III", "title": "Uma ferramenta parada", "kick": "2011: o fundo do poço vira alicerce", "label": "Capítulo III", "blocks": [{"t": "p", "x": "Em 2011, eu estava desempregada."}, {"t": "p", "x": "E foi justamente aí, dentro de casa, que eu encontrei uma oportunidade. O Rafael, meu então marido, tinha uma ferramenta que permitia fazer envios manuais de mensagens SMS. Só que ela estava parada, sem uso, enquanto ele se dedicava a outra empresa da qual era sócio."}, {"t": "p", "x": "Quando olhei para aquilo, não vi uma ferramenta esquecida. Vi um serviço útil para o mercado. Vi um negócio."}, {"t": "p", "x": "Conversei com o Rafael e pedi que ele confiasse em mim e me deixasse transformar aquela ferramenta numa empresa. Eu não tinha formação em tecnologia. Não tinha nenhuma experiência que garantisse que a ideia daria certo. E, mesmo assim, ele acreditou. Nosso acordo era simples: ele me ajudaria pontualmente a executar os disparos no sistema, a parte que eu ainda não sabia operar, e eu assumiria todo o resto."}, {"t": "p", "x": "Esse momento mudou a minha vida. Pela primeira vez, depois de tanto tempo me sentindo um fracasso, alguém olhou para mim e apostou. E eu descobri algo que nenhum sucesso teria me ensinado: o fundo do poço pode se tornar o pilar sobre o qual a gente reconstrói a vida."}, {"t": "hlp", "x": "Assim nasceu a GTI SMS."}, {"t": "img", "k": "gti2011", "cap": "Uma das primeiras artes da GTI SMS, publicada em dezembro de 2011.", "w": 686, "h": 694, "note": "olha a data ↑"}]}, {"num": "IV", "title": "A chefe da quadrilha", "kick": "A linha de frente, as ligações e dois colaboradores de quatro patas", "label": "Capítulo IV", "blocks": [{"t": "p", "x": "Fui para a linha de frente sozinha. As ligações, a prospecção do zero, a apresentação do serviço, a conquista dos primeiros clientes e a construção da carteira comercial: tudo isso passou pelas minhas mãos. Os clientes começaram a aparecer, a demanda cresceu rápido e eu percebi que aquele serviço tinha um potencial muito maior do que a gente imaginava no começo."}, {"t": "p", "x": "Mas nem tudo eram clientes e telefonemas. O meu primeiro grande desafio operacional foi manter o escritório inteiro! Kkkkk!"}, {"t": "p", "x": "Naquela época, eu contava com dois pequenos colaboradores de quatro patas que não demonstravam o menor respeito pelo patrimônio da empresa. Bastava um minuto de descuido para eu encontrar documentos, materiais de trabalho e até partes da estrutura devidamente mastigados e espalhados pela casa."}, {"t": "p", "x": "Enquanto eu tentava construir uma empresa, a Tayla (a chefe e mandante da quadrilha) e o Teddy (que só obedecia às ordens da irmã mais velha) pareciam determinados a desmontá-la. Eram dois especialistas em destruição de processos. Mas, convenhamos: com aquelas carinhas, ficava difícil aplicar qualquer medida disciplinar. 😂"}, {"t": "imgs", "items": [{"k": "m3", "cap": "A sede da empresa depois de uma \"reunião\" da diretoria.", "w": 573, "h": 430, "note": ""}, {"k": "m4", "cap": "Mais uma auditoria surpresa da dupla.", "w": 574, "h": 430, "note": ""}]}, {"t": "imgs", "items": [{"k": "m5", "cap": "Tayla, a chefe da quadrilha.", "w": 587, "h": 369, "note": "os culpados ↑"}, {"k": "m6", "cap": "Teddy, o fiel subordinado.", "w": 576, "h": 384, "note": ""}]}, {"t": "p", "x": "Enquanto isso, a demanda não parava de crescer, e o envio manual começou a gerar filas de espera. A tração comercial foi tanta que, no fim de 2011, o Rafael começou a ampliar a participação dele e, no início de 2012, deixou a outra empresa para trabalhar comigo na GTI SMS."}]}, {"num": "V", "title": "\"Sabe o Facebook?\"", "kick": "Quando eu comecei a questionar o funcionamento da empresa", "label": "Capítulo V", "blocks": [{"t": "p", "x": "Conforme a GTI SMS crescia, eu passei a olhar para o ciclo inteiro do negócio: o tempo para executar cada serviço, as despesas, o lucro, o limite de clientes que conseguiríamos atender e as filas que só aumentavam. E a pergunta de sempre voltou: se continuarmos crescendo, como vamos dar conta de uma demanda maior com um processo manual?"}, {"t": "p", "x": "Havia outra coisa que me incomodava ainda mais. Naquele modelo, os clientes precisavam nos entregar as suas bases de contatos para que a gente fizesse os disparos. Aquilo não me parecia certo. A carteira de contatos é um dos ativos mais sensíveis e valiosos de uma empresa, e, me colocando no lugar dos nossos clientes, eu sabia que não gostaria de entregar a minha a terceiros."}, {"t": "p", "x": "Ninguém nunca reclamou. Nenhum cliente questionou. Era uma inquietação só minha, ligada aos meus valores e ao princípio de fazer o que é certo, mesmo quando ninguém está pedindo."}, {"t": "p", "x": "Foi daí que veio a ideia: e se os próprios clientes pudessem entrar num sistema e fazer os seus envios? Uma plataforma web, com usuário e senha, em que cada empresa gerenciasse as próprias campanhas com autonomia. De uma vez só, a gente acabaria com as filas, reduziria o trabalho manual, protegeria o sigilo das bases e prepararia a empresa para crescer."}, {"t": "p", "x": "O problema era explicar. Eu enxergava a solução com clareza na minha cabeça, mas não sabia traduzi-la em linguagem técnica, e não encontrava no mercado nada pronto que se parecesse com o que eu queria. Quando apresentei a ideia ao Rafael pela primeira vez, ela pareceu abstrata demais. Lembro que, numa das nossas conversas, ele chegou a dizer que aquilo não seria possível de fazer."}, {"t": "p", "x": "Eu continuei insistindo. Descrevia funcionalidades, procurava exemplos do dia a dia, até que encontrei uma comparação que nunca esqueci:"}, {"t": "q", "x": "==\"Sabe o Facebook==, onde a pessoa coloca o usuário e a senha, entra na própria conta, insere fotos e informações? É parecido com isso que eu quero. Quero que cada cliente possa entrar no próprio espaço e fazer seus envios.\""}, {"t": "p", "x": "Aquela analogia abriu o caminho. Depois de muitas conversas, envolvemos um desenvolvedor de sistemas, o Nayden, que participou da construção da solução, e o Rafael teve um papel muito importante transformando as minhas explicações de negócio em requisitos técnicos."}, {"t": "p", "x": "Eu não programei o sistema. Não escrevi uma única linha de código. O meu papel foi enxergar o problema, imaginar a solução, defendê-la quando ela parecia impossível e conduzir o alinhamento até que aquilo que existia só na minha cabeça virasse um produto real. Ver aquela plataforma funcionando foi uma das maiores alegrias da minha vida profissional."}]}, {"num": "VI", "title": "Do escritório em casa ao Mobile World Congress", "kick": "O que acontece quando um processo muda", "label": "Capítulo VI", "blocks": [{"t": "p", "x": "Quando a plataforma entrou no ar, o modelo da GTI SMS mudou por completo. Não foi só uma ferramenta nova: mudou a maneira como a empresa entregava valor. Os clientes ganharam autonomia e rapidez, o fluxo de trabalho ficou enxuto, as despesas caíram e os resultados financeiros melhoraram. Para ajudar os clientes nessa novidade, também produzimos um vídeo tutorial mostrando, passo a passo, como usar o sistema."}, {"t": "img", "k": "m11", "cap": "Vídeo tutorial da plataforma, um registro histórico de 2012. O link está no final do livro.", "w": 480, "h": 360, "note": ""}, {"t": "p", "x": "Em junho de 2012, por meio da minha rede de contatos, articulei a participação da GTI SMS numa ação de divulgação na Câmara Municipal de Goiânia, voltada a apresentar os serviços de SMS para campanhas eleitorais. Organizei toda a estrutura do estande, da aquisição do espaço aos materiais gráficos, banners e uniformes, o que ampliou a visibilidade da marca e abriu novos relacionamentos comerciais."}, {"t": "img", "k": "m12", "cap": "Junho de 2012: estande da GTI SMS na Câmara Municipal de Goiânia.", "w": 509, "h": 1100, "note": "montei tudo isso"}, {"t": "p", "x": "Em 2014, a GTI SMS esteve no Mobile World Congress, em Barcelona. Nos anos seguintes, a empresa continuou crescendo e atendendo empresas de diferentes portes, incluindo marcas conhecidas nacional e internacionalmente, como SEBRAE, Coca-Cola, NET, BV Financeira, BMW Group e 7-Eleven."}, {"t": "imgs", "items": [{"k": "m13", "cap": "Álbum da GTI SMS no Mobile World Congress 2014, em Barcelona.", "w": 697, "h": 709, "note": ""}, {"k": "m14", "cap": "Publicação institucional de 2017 com marcas apresentadas pela empresa.", "w": 399, "h": 628, "note": ""}]}, {"t": "p", "x": "A GTI SMS também mudou a minha vida pessoal. Ela me permitiu realizar um sonho: levar os meus filhos para conhecer a Disney, um lugar que fez parte de momentos inesquecíveis da minha própria infância."}, {"t": "img", "k": "disney", "cap": "Meus meninos no Magic Kingdom.", "w": 1100, "h": 611, "note": "sonho realizado"}, {"t": "p", "x": "Olhar para tudo isso era especialmente significativo porque eu sabia como tinha começado: uma ferramenta parada, uma mulher desempregada, alguém que confiou, a prospecção feita do zero e uma ideia defendida até virar realidade."}, {"t": "p", "x": "Com a operação rodando no autoatendimento e o Rafael cada vez mais presente na gestão do dia a dia, a minha parte na construção daquela empresa estava feita. O problema que eu tinha enxergado estava resolvido, e eu sentia falta justamente disso: construir, resolver, criar algo do zero. Eu gosto de ter problemas para resolver, processos para organizar e ideias para experimentar. Era hora de um novo desafio."}]}, {"num": "VII", "title": "Espaço Ka: cuidar de gente", "kick": "2017 a 2024", "label": "Capítulo VII", "blocks": [{"t": "p", "x": "A ideia de abrir um espaço de estética nasceu de algumas experiências ruins que vivi como cliente em clínicas do segmento. Elas me fizeram pensar em como aqueles serviços eram prestados e em como o cuidado com as pessoas poderia ser diferente. Por que precisava ser assim? Estudei o mercado e decidi criar o meu próprio negócio, para oferecer uma experiência verdadeiramente personalizada, humana e atenta a cada cliente."}, {"t": "p", "x": "Fundei o Espaço Ka e estive à frente da gestão e dos atendimentos por cerca de sete anos. Foram mais de 5.000 atendimentos e uma reputação de 5,0 estrelas no Google, construída com depoimentos que destacavam o cuidado com cada cliente."}, {"t": "p", "x": "Mas os números não contam a parte mais bonita. Com o tempo, construí relações muito especiais com as minhas clientes. Eu gostava de ouvir, de conversar e de perceber que aquele momento fazia uma diferença real na rotina de alguém. Muitas vezes, eu sentia que elas não procuravam só uma massagem ou um procedimento estético. Procuravam um refúgio, um lugar onde fossem ouvidas, acolhidas e tratadas com atenção de verdade."}, {"t": "p", "x": "Saber que o meu trabalho deixava o dia de outra pessoa melhor me trazia uma satisfação que não dependia do valor cobrado. Foi esse afeto que me manteve tantos anos no segmento."}]}, {"num": "VIII", "title": "O trailer", "kick": "Um fracasso que me ensinou a validar antes de pôr na rua", "label": "Capítulo VIII", "blocks": [{"t": "p", "x": "Durante a jornada na estética, tive mais uma daquelas ideias que não me deixam dormir: e se os atendimentos pudessem ir até as pessoas?"}, {"t": "p", "x": "Assim nasceu o Flamboyant Estética Express, uma unidade móvel de atendimento. Planejei a estrutura e contratei a construção de um trailer totalmente equipado para levar os procedimentos para fora de um espaço comercial convencional. Ver mais um conceito sair da minha cabeça e virar algo concreto foi muito gratificante."}, {"t": "p", "x": "E aí veio a vida real. Na operação, eu esbarrei em dificuldades de transporte, em custos e numa sobrecarga de trabalho sem equipe de apoio, coisas que eu não tinha dimensionado direito. Essas limitações tornaram o trailer inviável."}, {"t": "p", "x": "Eu poderia contar só os acertos. Mas este é um daqueles fracassos que eu faço questão de incluir, porque me deu uma lição que hoje é praticamente um mantra profissional: antes de colocar uma ideia na rua, valide se ela se sustenta na operação. Uma boa ideia que não para em pé no dia a dia ainda não é uma solução. É só um trailer muito bonito estacionado. Rsrs."}, {"t": "img", "k": "m15", "cap": "Flamboyant Estética Express: a unidade móvel idealizada e construída.", "w": 793, "h": 595, "note": "lindo, mas inviável rsrs"}]}, {"num": "IX", "title": "A solidão", "kick": "Quando conquistar sozinha deixou de ter graça", "label": "Capítulo IX", "blocks": [{"t": "p", "x": "Apesar da realização com os atendimentos, os anos trouxeram um incômodo silencioso: a solidão profissional."}, {"t": "p", "x": "Nos meus primeiros empregos, e na GTI SMS depois que a operação cresceu, eu sempre estive cercada de gente: equipe, parceiros, eventos. No Espaço Ka, eu trabalhava praticamente sozinha. Era eu, a minha rotina, os meus atendimentos e as minhas responsabilidades."}, {"t": "p", "x": "Esse incômodo começou em 2020. Durante o lockdown da COVID-19, o Espaço Ka ficou parado, e eu tinha acabado de me separar, voltando a ser mãe solo. Foi nesse silêncio que pensei, pela primeira vez, na possibilidade de mudar de carreira."}, {"t": "p", "x": "Quando o espaço reabriu e a rotina voltou, o incômodo voltou junto, cada vez mais claro. Percebi que conquistar resultados sozinha já não me trazia a mesma alegria. Eu sentia falta de uma equipe com quem dividir ideias, debater soluções, enfrentar problemas novos e crescer junto. Sentia falta de ter com quem comemorar. Queria voltar a fazer parte de algo maior e contribuir para o crescimento de uma empresa."}, {"t": "p", "x": "Mas mudar de carreira assusta. Eu tinha anos de bagagem como empreendedora, administrando negócios, lidando com clientes e resolvendo problemas reais. Só que ainda não tinha diploma, nem uma trajetória linear dentro de grandes empresas, e não sabia como traduzir a minha vivência para os filtros tradicionais do mercado. Por essas inseguranças, continuei tocando o Espaço Ka."}, {"t": "p", "x": "Mas comecei a me preparar. Em 2021, voltei a estudar e iniciei o bacharelado em Administração. E foi nessa volta aos estudos que eu finalmente descobri o que estava por trás da menina que se achava burra."}]}, {"num": "X", "title": "O laudo", "kick": "O dia em que tudo fez sentido", "label": "Capítulo X", "blocks": [{"t": "p", "x": "Em 2022, recebi o diagnóstico de TDAH, com predominância desatenta."}, {"t": "note", "x": "o maior alívio da minha vida"}, {"t": "p", "x": "Confesso que ler aquele laudo me trouxe a maior sensação de alívio da minha vida. Até então, eu acreditava de verdade que era burra, preguiçosa, desorganizada e desinteressada, a imagem que eu tinha construído de mim mesma desde a infância. Quando a psiquiatra me explicou como funcionava o meu tipo de TDAH, tudo fez sentido. A escola, as broncas, a sensação de estar sempre um passo atrás. Não era falta de capacidade. Era um cérebro que funcionava de outro jeito e que ninguém tinha sabido ler."}, {"t": "p", "x": "Com o tratamento, a minha vida mudou. A menina das notas baixas terminou o bacharelado em Administração com coeficiente de rendimento de 9,28. E hoje, nas minhas duas pós-graduações, um MBA em Inteligência Artificial, Gestão e Negócios e uma pós em Segurança da Informação, mantenho média geral de 9,66. São notas que a menina que eu fui jamais imaginaria."}, {"t": "p", "x": "Hoje eu me respeito, me compreendo e sinto orgulho de mim. E aprendi algo que vale para qualquer pessoa e para qualquer empresa: quando você entende como algo realmente funciona, para de brigar com ele e começa a criar o ambiente certo para que ele renda. Foi exatamente o que eu fiz em seguida."}]}, {"num": "XI", "title": "Estudar rindo", "kick": "Um ecossistema de aprendizagem com uma regra inegociável", "label": "Capítulo XI", "blocks": [{"t": "p", "x": "Em novembro de 2024, tomei a decisão: encerrei completamente as atividades do Espaço Ka e passei a me dedicar 100% aos estudos para o concurso de Auditor-Fiscal da Receita Estadual de Goiás (SEFAZ-GO). A área fiscal me atraía porque une investigação, análise de dados, legislação complexa e resolução de problemas, dentro de uma instituição sólida e cercada de colegas."}, {"t": "p", "x": "O edital era gigantesco: vários ramos do Direito, Contabilidade, Auditoria, Ciência e Análise de Dados, entre muitas outras disciplinas. Tudo isso somado à legislação tributária nacional e estadual e à Reforma Tributária, com os mais de 500 artigos da Lei Complementar nº 214/2025."}, {"t": "p", "x": "Para um cérebro com TDAH, aquilo era uma montanha. Então fiz o que sempre faço: olhei para o problema e perguntei se precisava ser assim."}, {"t": "p", "x": "No início de 2025, comecei a construir um ecossistema digital de aprendizagem no NotebookLM. Criei métodos próprios para estruturar fontes, escrever instruções, processar grandes volumes de informação e transformar o mesmo conteúdo em vários formatos. E todo material gerado, fosse aula em áudio, apresentação de slides ou explicação, tinha que obedecer a uma regra fundamental:"}, {"t": "q", "x": "Tinha que ser engraçado."}, {"t": "p", "x": "Pode parecer brincadeira, mas não era. O humor prendia a minha atenção, fixava a informação na memória e ainda me fazia dar boas risadas no meio de longas horas diárias de estudo. Eu tinha desenhado um sistema de aprendizagem sob medida para o jeito que o meu cérebro funciona."}, {"t": "p", "x": "O ecossistema cresceu: mais de 100 notebooks temáticos e mais de 5 mil materiais de estudo gerados. Parte desse material foi publicada em canais públicos no YouTube e no Spotify, e começou a atrair visualizações, comentários e seguidores de forma orgânica."}]}, {"num": "XII", "title": "A mesa de estudos", "kick": "Ir até o fim", "label": "Capítulo XII", "blocks": [{"t": "p", "x": "A SEFAZ-GO não era a minha primeira experiência com concursos, e eu já conhecia os desafios das provas longas e com tempo muito apertado, um formato em que o TDAH me exigia um esforço redobrado. Mesmo assim, segui firme, movida por motivos muito fortes: os meus filhos e, de um jeito especial, a minha mãe, a quem desejo, há muitos anos, oferecer a vida tranquila que ela sempre mereceu."}, {"t": "img", "k": "m22", "cap": "Minha mãe, parte essencial das minhas motivações.", "w": 375, "h": 671, "note": ""}, {"t": "p", "x": "Nessa jornada, atravessei dois períodos severos de esgotamento. O primeiro em 2024. O segundo em abril de 2026, na reta final, quando o desgaste dos estudos se somou a perdas pessoais muito dolorosas."}, {"t": "p", "x": "Em agosto de 2025, eu me despedi da Tayla, minha companheira de 15 anos e parceira de incontáveis madrugadas de estudo. No início de abril de 2026, precisei me despedir do Teddy, meu companheiro de 14 anos. A eutanásia dele aconteceu sobre a mesma mesa onde eu estudava todos os dias. Foi devastador. Em meio ao luto, à pressão da prova e ao cansaço acumulado, vivi um bloqueio intenso: eu tentava ler e assistir às aulas, mas parecia que a minha mente tinha parado."}, {"t": "img", "k": "m24", "cap": "Tayla e Teddy: a chefe da quadrilha e o seu fiel subordinado, presentes também na minha história de estudos.", "w": 531, "h": 531, "note": ""}, {"t": "p", "x": "Mesmo com a dor e a exaustão, desistir de fazer a prova não era uma opção. No dia 17 de maio de 2026, fui ao local de prova e entreguei o meu máximo até o último segundo."}, {"t": "p", "x": "Não fui aprovada. Aceitar esse resultado depois de investir tanto tempo, energia e esperança foi difícil. Mas ter ido até o fim me deu clareza. Hoje eu sei que provas longas e cronometradas não conversam com o jeito que o meu cérebro funciona, mesmo com o tempo adicional que posso solicitar: a minha leitura é mais lenta e a minha memória de trabalho exige estratégias diferentes. E sei, principalmente, que isso não diz nada sobre o que eu sou capaz de entregar quando tenho tempo, método e as ferramentas certas."}, {"t": "p", "x": "Permanecer indefinidamente naquele modelo não seria saudável para mim. Era hora de respeitar a minha história e recalcular a rota."}]}, {"num": "XIII", "title": "O modelo que eu abandonei", "kick": "Quando a curiosidade encontrou os dados", "label": "Capítulo XIII", "blocks": [{"t": "p", "x": "Durante a maratona de estudos, aconteceu algo que eu não tinha planejado. O contato com Administração, Auditoria e Ciência de Dados acordou de novo a minha curiosidade investigativa. Comecei a estudar os fundamentos de Inteligência Artificial, Machine Learning e IA Generativa, e fiquei fascinada."}, {"t": "p", "x": "Quanto mais eu aprendia, mais queria entender como aquelas ferramentas funcionavam, quais eram os seus limites e como poderiam transformar a maneira como pessoas e empresas analisam informações e resolvem problemas. E percebi uma conexão com a minha própria história: lá atrás, enxergar um gargalo e imaginar uma solução tecnológica tinha mudado o rumo de uma empresa. Agora, eu tinha nas mãos tecnologias capazes de ampliar muito essa investigação."}, {"t": "p", "x": "Como nunca gostei de ficar só na teoria, transformei os estudos em laboratório e comecei a desenvolver projetos próprios de análise de dados com apoio de IA. Num deles, testei um modelo que parecia promissor: nos dados que já conhecia, ele acertava bastante. Mas, quando o testei com dados que nunca tinha visto, o acerto despencou. O modelo tinha decorado o passado, em vez de aprender."}, {"t": "p", "x": "Eu poderia ter guardado o número bonito. Preferi abandonar o modelo e redirecionar o projeto. A ferramenta gera respostas. O rigor de validá-las é nosso."}, {"t": "p", "x": "Aos poucos, negócios, operações, melhoria de processos, dados e inteligência artificial passaram a fazer sentido numa mesma direção."}]}, {"num": "XIV", "title": "Remontando", "kick": "O próximo capítulo", "label": "Capítulo XIV", "blocks": [{"t": "p", "x": "Lembra do texto do LinkedIn que deixou de ser meu?"}, {"t": "p", "x": "Hoje eu entendo o que aconteceu ali. A inteligência artificial é uma ferramenta incrível. Eu a uso todos os dias, estudo como ela funciona e construí com ela um ecossistema inteiro de aprendizagem. Mas ela amplifica aquilo que a gente dá a ela. Se ninguém sabe qual é o problema, ou de quem é a história, ela vai produzir, com muita eficiência, a resposta errada. Quem decide qual problema vale a pena resolver, quem pergunta \"por que precisa ser assim?\", ainda é uma pessoa."}, {"t": "p", "x": "Olhando para trás, percebo que fiz com a minha carreira o que fazia com os brinquedos quebrados. Desmontei peça por peça. Entendi o mecanismo. Descobri onde estava o defeito, e que, em boa parte das vezes, não era defeito nenhum. Era só um jeito diferente de funcionar."}, {"t": "p", "x": "E essas são as peças que eu tenho na mesa hoje:"}, {"t": "ul", "items": ["A curiosidade de quem olha um processo que todo mundo aceita e pergunta se não existe um jeito melhor.", "A experiência de ter enxergado um gargalo, imaginado uma solução e defendido essa ideia até ela virar um produto que transformou uma empresa.", "Treze anos empreendendo, lidando com clientes, operações, custos e decisões reais.", "O cuidado com pessoas, aprendido em milhares de atendimentos.", "O uso prático e crítico de dados e de inteligência artificial, com o rigor de abandonar uma conclusão quando os números não a sustentam.", "E o bom humor, que deixa tudo mais leve e me dá coragem para a próxima subida."]}, {"t": "p", "x": "Fracassei muitas vezes. Me reinventei outras tantas. E, se aprendi alguma coisa, é que um recomeço não apaga o que veio antes: ele usa tudo como peça."}, {"t": "p", "x": "Algumas peças ainda estão na mesa. Mas, desta vez, eu não quero remontar sozinha. Quero voltar a fazer parte de uma equipe, assumir responsabilidades, continuar aprendendo e ajudar uma empresa a resolver os seus problemas e alcançar os seus resultados."}]}, {"num": "", "title": "Uma lembrança que não cabe em números", "kick": "A senha 040 · IPASGO, 2005–2007", "label": "Anexo", "blocks": [{"t": "p", "x": "Ao revisitar a minha caminhada, percebi que algumas das lembranças mais valiosas que eu carrego não cabem em número nenhum. Esta é uma delas, e eu a guardo há 20 anos."}, {"t": "p", "x": "Era mais um dia de trabalho no IPASGO. Naquela época, o movimento era intenso: mesmo num dia calmo, a espera mínima era de 30 minutos, e em dias cheios eu chegava a atender cerca de 100 pessoas. Naquele dia, a recepção estava especialmente lotada."}, {"t": "p", "x": "Quando chamei a senha 040 pelo painel, sentou-se no meu guichê um cliente muito simpático. O atendimento fluiu de maneira leve, resolvemos o que ele precisava e, na despedida, agradeci pela paciência na espera. Foi então que ele deixou um presente sobre a minha mesa."}, {"t": "p", "x": "Enquanto esperava sentado nas cadeiras da recepção, antes mesmo de ser chamado, ele tinha ficado me observando trabalhar de longe. E me desenhou, com riqueza de detalhes, no verso do pequeno papel da senha."}, {"t": "p", "x": "Aquele pedacinho de papel atravessou décadas comigo. Guardo a senha até hoje, protegida dentro de uma pasta, como lembrança viva do dia em que, no meio de uma rotina exaustiva, alguém parou para me enxergar."}, {"t": "imgs", "items": [{"k": "m30", "cap": "O desenho no verso da senha.", "w": 592, "h": 788, "note": ""}, {"k": "m31", "cap": "A senha 040.", "w": 504, "h": 671, "note": "guardada há 20 anos ↑"}]}]}, {"num": "", "title": "Para o mundo", "kick": "Abra e explore", "label": "Anexo", "blocks": [{"t": "link", "x": "Meu perfil no LinkedIn", "url": "https://www.linkedin.com/in/karenstefanly/"}, {"t": "link", "x": "Meu perfil no GitHub", "url": "https://github.com/karengouveia"}, {"t": "link", "x": "Vídeo da plataforma GTI SMS (2012), no YouTube", "url": "https://www.youtube.com/watch?v=m79Vk_6AaVI"}]}];
+(function(){
+const $=s=>document.querySelector(s), book=$('#book'), L=$('#L'), R=$('#R'), leaf=$('#leaf'), cover=$('#cover');
+let PW=0,PH=0,single=false,pages=[],s=0,busy=false,opened=false;
+const DUR=900;
+
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function sizes(){
+  const W=innerWidth,H=innerHeight-70;
+  single=W<820;
+  if(single){PW=Math.min(W-28,470);PH=Math.min(H-24,Math.round(PW*1.5));PW=Math.min(PW,Math.round(PH/1.42));}
+  else{PH=Math.min(H-40,800);PW=Math.round(PH*.69);if(PW*2>W-60){PW=Math.floor((W-60)/2);PH=Math.round(PW/.69);}}
+  document.body.classList.toggle('single',single);
+  const st=document.documentElement.style;
+  st.setProperty('--pw',PW+'px');st.setProperty('--ph',PH+'px');st.setProperty('--fs',(PW*(single?.042:.0355)).toFixed(2)+'px');st.setProperty('--dur',DUR+'ms');
+}
+
+function blankPage(head,num){
+  const p=el('div','page');p.append(el('div','pg-head',head||''),el('div','pg-body'),el('div','pg-foot',num==null?'':String(num)));return p;
+}
+
+const VIDEO={m11:'https://www.youtube.com/watch?v=m79Vk_6AaVI'};
+function figure(it,bw,maxH){
+  const r=it.h/it.w;let w=bw,h=bw*r;if(h>maxH){h=maxH;w=h/r;}
+  const im=`<img src="img/${it.k}.jpg" alt="${esc(it.cap)}" data-cap="${esc(it.cap)}" style="width:${Math.round(w)}px;height:${Math.round(h)}px">`;
+  const media=VIDEO[it.k]?`<a class="video" href="${VIDEO[it.k]}" target="_blank" rel="noopener" aria-label="Assistir ao vídeo no YouTube">${im}<span class="play" aria-hidden="true"></span></a>`:im;
+  return `<figure>${media}<figcaption>${esc(it.cap)}</figcaption>${it.note?`<span class="hand">${esc(it.note)}</span>`:''}</figure>`;
+}
+
+function paginate(){
+  const M=$('#measure');M.innerHTML='';
+  const out=[];let pg=null,body=null,chap='';
+  const meas=()=>{M.innerHTML='';const p=blankPage('x','0');p.style.width=PW+'px';p.style.height=PH+'px';p.style.position='relative';M.append(p);return p.querySelector('.pg-body');};
+  const fits=()=>body.scrollHeight<=body.clientHeight+1;
+  function newPage(head,opener){
+    pg={head:opener?'':head,html:'',chap};body=meas();out.push(pg);
+  }
+  function commit(){pg.html=body.innerHTML;}
+  function add(node){body.append(node);if(fits()){commit();return true;}node.remove();return false;}
+
+  // front matter
+  out.push({head:'',html:`<div class="tp"><div class="a">Karen Gouveia</div><h1>Por que precisa ser assim?</h1><p>A história de uma mulher que desmonta as coisas para entender como elas funcionam, inclusive a própria carreira.</p><div class="orn">❦</div></div>`,front:1});
+  out.push({head:'',html:`<div class="opener" style="padding-top:6%"><p class="lab">Em números</p><h2>Uma trajetória, medida</h2></div><div class="nums"><div><b>13 anos</b><span>empreendendo</span></div><div><b>5.000+</b><span>atendimentos</span></div><div><b>100+</b><span>notebooks de estudo com IA</span></div><div><b>1</b><span>pergunta que atravessa tudo</span></div></div>`,front:1});
+  const tocIdx=out.length;
+  out.push({head:'',html:'',front:1,toc:1});
+  const starts=[];
+  DATA.forEach((c,ci)=>{
+    chap=c.title;
+    if(out.length%2===0 && !single) {/* keep chapters starting on any page */}
+    newPage('',true);starts.push(out.length-1);
+    const op=el('div','opener',`<p class="lab">${esc(c.label)}</p>${c.num?`<div class="num">${c.num}</div>`:''}<h2>${esc(c.title)}</h2>${c.kick?`<p class="kick">${esc(c.kick)}</p>`:''}<div class="rule"></div>`);
+    add(op);
+    let first=true;
+    const bw=PW*(1-.19);
+    for(const b of c.blocks){
+      const bh=PH*.78;
+      let node;
+      if(b.t==='p'){
+        node=el('p',first?'first':'');node.textContent=b.x;
+        if(add(node)){first=false;continue;}
+        // split paragraph across pages
+        const words=b.x.split(' ');let lo=0,hi=words.length;
+        const part=el('p',first?'first':'');body.append(part);
+        while(lo<hi){const mid=Math.ceil((lo+hi)/2);part.textContent=words.slice(0,mid).join(' ');if(fits())lo=mid;else hi=mid-1;}
+        if(lo<6){part.remove();commit();newPage(chap);const n2=el('p',first?'first':'');n2.textContent=b.x;
+          if(!add(n2)){/* very long: split again */ let rest=words; while(rest.length){const q=el('p','cont');body.append(q);let a=0,z=rest.length;while(a<z){const m=Math.ceil((a+z)/2);q.textContent=rest.slice(0,m).join(' ');if(fits())a=m;else z=m-1;}q.textContent=rest.slice(0,a).join(' ');commit();rest=rest.slice(a);if(rest.length)newPage(chap);} }
+          first=false;continue;}
+        part.textContent=words.slice(0,lo).join(' ');part.style.textAlignLast='justify';commit();
+        let rest=words.slice(lo);
+        while(rest.length){newPage(chap);const q=el('p','cont');body.append(q);let a=0,z=rest.length;
+          while(a<z){const m=Math.ceil((a+z)/2);q.textContent=rest.slice(0,m).join(' ');if(fits())a=m;else z=m-1;}
+          q.textContent=rest.slice(0,a).join(' ');if(a<rest.length)q.style.textAlignLast='justify';commit();rest=rest.slice(a);}
+        first=false;continue;
+      }
+      if(b.t==='q'){const x=esc(b.x);node=el('blockquote','',x.includes('==')?x.replace(/==/g,''):`<mark class="hl">${x}</mark>`);}
+      else if(b.t==='hlp'){node=el('p','hlp',`<mark class="hl">${esc(b.x)}</mark>`);}
+      else if(b.t==='note'){node=el('p','hand',esc(b.x));}
+      else if(b.t==='h3'){node=el('h3','',esc(b.x));const probe=el('p','','x '.repeat(60));const wrap=el('div','after');wrap.append(node,probe);
+        if(!add(wrap)){commit();newPage(chap);}else{wrap.remove();}
+        body.append(node);commit();first=true;continue;}
+      else if(b.t==='ul'){
+        for(const x of b.items){const u=el('ul','',`<li>${esc(x)}</li>`);if(!add(u)){newPage(chap);add(u);}}
+        continue;}
+      else if(b.t==='img'){node=el('div','',figure(b,bw,Math.min(bh*.55,PH*.42)));}
+      else if(b.t==='imgs'){
+        if(b.items.length===1){node=el('div','',figure(b.items[0],bw*.6,PH*.32));}
+        else{node=el('div','pair',b.items.map(it=>figure(it,(bw-.8*parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs')))/2,PH*.3)).join(''));}
+      }
+      else if(b.t==='link'){node=el('a','lnk',`<b>${esc(b.x)}</b><small>${esc(b.url.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))}</small>`);node.href=b.url;node.target='_blank';node.rel='noopener';}
+      if(!add(node)){newPage(chap);add(node);}
+      if(b.t!=='q')first=false;
+    }
+    if(c.title==='Remontando'){
+    if(!single && out.length%2===0) out.push({head:'',html:'<div class="end"><div class="orn">❦</div></div>',front:1});
+  out.push({head:'',html:'<img class="bleed" src="img/karen.jpg" alt="Karen Gouveia" data-cap="Karen Gouveia">',front:1,full:1});
+  out.push({head:'',html:`<div class="cta"><p class="big"><span style="white-space:nowrap">Talvez o próximo</span><br><span style="white-space:nowrap">capítulo comece</span><br><span style="white-space:nowrap">com você.</span></p><svg viewBox="0 0 300 20" aria-hidden="true"><path d="M6 12 C 60 4, 120 16, 180 9 S 270 6, 294 11"/></svg><img class="sig" src="img/assinatura.png" alt="Assinatura: Karen Gouveia"></div>`,front:1});
+    }
+  });
+  // table of contents
+  const toc=DATA.map((c,i)=>`<li><button type="button" data-go="${starts[i]}"><span class="n">${c.num||'·'}</span><span class="t">${esc(c.title)}</span><i></i><span class="pn">${starts[i]+1}</span></button></li>`).join('');
+  out[tocIdx].html=`<div class="opener" style="padding-top:6%;margin-bottom:.4em"><p class="lab">Sumário</p></div><ul class="toc">${toc}</ul>`;
+  out.forEach((p,i)=>{p.num=i+1;});
+  M.innerHTML='';
+  return out;
+}
+
+function render(i,side){
+  if(i<0||i>=pages.length){const e=el('div','page');e.style.background=i<0?'#EFE6D3':'var(--paper)';return e;}
+  const p=pages[i];
+  const head=p.front?'':(p.head? (side==='L'?'Karen Gouveia':p.chap) :'');
+  const e=blankPage(head,p.front?'':p.num);if(p.full)e.classList.add('full');e.querySelector('.pg-body').innerHTML=p.html;
+  if(p.toc)e.querySelector('.pg-body').style.overflow='visible';
+  return e;
+}
+
+// spread s: desktop L=2s-1, R=2s ; single: R=s
+const maxS=()=>single?pages.length-1:Math.floor(pages.length/2);
+function idx(sp){return single?{l:null,r:sp}:{l:2*sp-1,r:2*sp};}
+function show(){
+  const {l,r}=idx(s);
+  L.innerHTML='';R.innerHTML='';
+  if(!single&&l>=0)L.append(render(l,'L'));
+  R.append(render(r,'R'));
+  $('#prev').disabled=s<=0;$('#next').disabled=s>=maxS();
+  const tot=pages.length;
+  $('#pos').textContent=single?`${r+1} de ${tot}`:(l<0?`1 de ${tot}`:`${l+1}–${Math.min(r+1,tot)} de ${tot}`);
+}
+
+function flip(dir){
+  if(busy||!opened)return;const t=s+dir;if(t<0||t>maxS())return;
+  busy=true;const a=idx(s),b=idx(t);
+  const F=leaf.querySelector('.front'),B=leaf.querySelector('.back');F.innerHTML='';B.innerHTML='';
+  leaf.style.transition='none';
+  if(dir>0){
+    F.append(render(a.r,'R'));if(!single)B.append(render(b.l,'L'));
+    R.innerHTML='';R.append(render(b.r,'R'));
+    leaf.style.transform='rotateY(0deg)';
+  }else{
+    if(single){F.append(render(b.r,'R'));}
+    else{B.append(render(a.l,'L'));F.append(render(b.r,'R'));L.innerHTML='';if(b.l>=0)L.append(render(b.l,'L'));}
+    leaf.style.transform='rotateY(-180deg)';
+  }
+  leaf.style.display='block';leaf.classList.remove('go');void leaf.offsetWidth;
+  leaf.style.transition=`transform ${DUR}ms cubic-bezier(.45,.05,.3,1)`;leaf.classList.add('go');
+  requestAnimationFrame(()=>{leaf.style.transform=dir>0?'rotateY(-180deg)':'rotateY(0deg)';});
+  setTimeout(()=>{s=t;show();leaf.style.display='none';busy=false;},DUR+20);
+}
+
+function open(){if(opened)return;opened=true;book.classList.add('open');document.body.classList.add('is-open');cover.setAttribute('aria-label','Livro aberto');show();}
+function shut(){if(!opened||busy)return;s=0;show();opened=false;book.classList.remove('open');document.body.classList.remove('is-open');cover.setAttribute('aria-label','Abrir o livro');}
+function go(page){if(!opened)return;s=single?page:Math.floor((page+1)/2);show();}
+
+cover.addEventListener('click',open);
+cover.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+$('#next').onclick=()=>flip(1);$('#prev').onclick=()=>flip(-1);$('#shut').onclick=shut;
+addEventListener('keydown',e=>{if(document.querySelector('#lb').open)return;if(e.key==='ArrowRight')opened?flip(1):open();if(e.key==='ArrowLeft')flip(-1);});
+// clicks on pages: images zoom, toc jumps, otherwise page side turns
+$('#stage').addEventListener('click',e=>{
+  if(!opened)return;
+  if(e.target.closest('a'))return;
+  const img=e.target.closest('figure img, img.bleed');if(img){const lb=$('#lb');lb.querySelector('img').src=img.src;lb.querySelector('p').textContent=img.dataset.cap;lb.showModal();return;}
+  const g=e.target.closest('[data-go]');if(g){go(+g.dataset.go);return;}
+  if(e.target.closest('a'))return;
+  const slot=e.target.closest('.slot');if(!slot)return;
+  if(single){const r=slot.getBoundingClientRect();flip(e.clientX<r.left+r.width*.3?-1:1);}
+  else flip(slot.id==='R'?1:-1);
+});
+$('#lb').addEventListener('click',()=>$('#lb').close());
+let tx=null;$('#stage').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+$('#stage').addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){opened?flip(dx<0?1:-1):open();}tx=null;},{passive:true});
+
+function build(){
+  const cur=opened?idx(s).r:0;
+  sizes();pages=paginate();
+  if(opened){s=single?Math.min(cur,pages.length-1):Math.min(Math.floor((cur+1)/2),maxS());}
+  show();
+}
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(build,250);});
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(build);
+sizes();
+})();
+</script>
+</body>
+</html>
